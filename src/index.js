@@ -1,6 +1,7 @@
 import './css/styles.css';
 var debounce = require('lodash.debounce');
-
+import fetchCountry from "./fetchCounties";
+import Notiflix from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -14,59 +15,67 @@ const refs = {
 // const newFetchCounties = new NewFetchCounties();
 
 
-refs.input.addEventListener('input', debounce(onSearch), 300);
+refs.input.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 
 function onSearch(event) {
-  
+    event.preventDefault()
 
-    const searchCountry = refs.input.value;
+    const searchCountry = refs.input.value.trim();
+
+    if (!searchCountry) {
+        refs.countryList.innerHTML = '';
+        refs.countryInfo.innerHTML = '';
+    return;  
+    }
     
-
-    findName(searchCountry)
-        // .then(country => {
-        //     console.log(country);
-        // })
-        .then(renderPosts)
+    fetchCountry(searchCountry)
+        
+        .then(renderCountries)
         .catch(notFindError);
     
     
-   
-    
 }
 
-function findName(country) {
-   
 
-    const urlCountry = `https://restcountries.com/v2/name/${country}`
-    
-    return fetch(urlCountry).then(response => response.json());
-    
-}
 
-   function renderPosts(country) {
-  const markup = country
-    .map(({ flags, name, nativeName, capital, population, languages}) => {
-      return `<div class="country">
-  <div class="country__head">
-    <img class="country__flag" src="${flags.svg}" alt="${name}">
-    <h1 class="country__title">${nativeName}</h1>
-  </div>
-   <ul class="country__list">
-    <li class="country__item">${capital}</li>
-    <li class="country__item">${population}</li>
+function renderCountries(country) {
+
     
-    <li class="country__item">${languages}</li>
-   
-   </ul>
-</div> `;
+    refs.countryList.innerHTML = '';
+    refs.countryInfo.innerHTML = '';
+    if (country.length > 10) {
+        Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
+    }
+
+    if (country.length >= 2 && country.length <= 10) {
+        const list = country.map(({flags, name}) => {
+            return `<li class="country-list__item"><img class="mini-flag" src="${flags.svg}" alt="" width="50" height="40"><h2 class="country-list__title">${name.official}</h2></li>`
+        }).join('');
+      refs.countryList.innerHTML = list;
+    }
+
+    
+ if (country.length === 1) {
+     const markup = country
+      .map(({ flags, name, capital, population, languages }) => {
+         
+     return `<div>
+            <img  src="${flags.svg}" alt="${name.official}" width="70" height="50">
+            <h2>${name.official}</h2>
+            <p>Capital: ${capital}</p>
+            <p>Population: ${population}</p>
+            <p>Languages: ${Object.values(languages)}</p>
+            </div>`;
+       
     })
     .join("");
   refs.countryInfo.innerHTML = markup;
 }
+ }
 
     function notFindError(error) {
-        alert('Впишіть існуючу країну');
+        Notiflix.Notify.failure("Oops, there is no country with that name");
     }
 
 

@@ -1,13 +1,7 @@
-// export default class NewFetchCounties {
-//     constructor() {
-
-//     }
-
-//     fetchCounties() {
-//         const urlCountries = 'https://restcountries.com/v2/all';
-
-//         return fetch(urlCountries)
-//             .then(response => response.json())
-            
-//     }
-// } 
+export default function findName(country) {
+   
+    const urlCountry = `https://restcountries.com/v3.1/name/${country}`
+    
+    return fetch(urlCountry).then(response => response.json());
+    
+}
