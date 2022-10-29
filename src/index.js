@@ -37,8 +37,6 @@ function onSearch(event) {
     
 }
 
-
-
 function renderCountries(country) {
 
     

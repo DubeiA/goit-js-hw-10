@@ -1,7 +1,9 @@
 export default function findName(country) {
-   
-    const urlCountry = `https://restcountries.com/v3.1/name/${country}`
-    
-    return fetch(urlCountry).then(response => response.json());
-    
+
+    return fetch(`https://restcountries.com/v3.1/name/${country}`).then(response => {
+    if (response.status !== 200) {
+      throw new Error(response.status);;
+    } 
+    return response.json();
+  });
 }
