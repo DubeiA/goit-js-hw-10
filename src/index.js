@@ -42,7 +42,7 @@ function renderCountries(country) {
     
     refs.countryList.innerHTML = '';
     refs.countryInfo.innerHTML = '';
-    if (country.length > 10) {
+    if (country.length > 50) {
         Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
     }
 
